@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// 定义链表节点结构
+struct linknode {
+    int val;
+    struct linknode *next;
+};
+
+// 两数相加函数
+struct linknode* addtwonumbers(struct linknode *l1, struct linknode *l2) {
+    struct linknode *dummy = (struct linknode *)malloc(sizeof(struct linknode));
+    struct linknode *cur = dummy;
+    int carry = 0;
+
+    while (l1 || l2 || carry) {
+        int t = carry;
+        if (l1) {
+            t += l1->val;
+            l1 = l1->next;
+        }
+        if (l2) {
+            t += l2->val;
+            l2 = l2->next;
+        }
+
+        cur->next = (struct linknode *)malloc(sizeof(struct linknode));
+        cur->next->val = t % 10;
+        cur->next->next = NULL;
+
+        carry = t / 10;
+        cur = cur->next;
+    }
+
+    return dummy->next;
+}
+
+// 创建新节点
+struct linknode* createNode(int val) {
+    struct linknode* newNode = (struct linknode*)malloc(sizeof(struct linknode));
+    newNode->val = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// 打印链表
+void printList(struct linknode* head) {
+    struct linknode* current = head;
+    while (current != NULL) {
+        printf("%d ", current->val);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+// 释放链表内存
+void freeList(struct linknode* head) {
+    struct linknode* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    // 创建第一个链表 2 -> 4 -> 3
+    struct linknode* l1 = createNode(2);
+    l1->next = createNode(4);
+    l1->next->next = createNode(3);
+
+    // 创建第二个链表 5 -> 6 -> 4
+    struct linknode* l2 = createNode(5);
+    l2->next = createNode(6);
+    l2->next->next = createNode(4);
+
+    // 调用两数相加函数
+    struct linknode* result = addtwonumbers(l1, l2);
+
+    // 打印结果
+    printf("相加结果: ");
+    printList(result);
+
+    // 释放内存
+    freeList(l1);
+    freeList(l2);
+    freeList(result);
+
+    return 0;
+}
